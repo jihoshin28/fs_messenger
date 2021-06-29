@@ -24,6 +24,6 @@ io.on('connection', (socket) => {
 })
 
 server.listen(port, () => {
-    console.log("Listening on Port 3000")
+    console.log(`Listening on Port ${port}`)
 })
 

@@ -5,46 +5,62 @@ const cors = require('cors')
 app.use(routes)
 app.use(cors())
 
+
+const {v4: uuidv4} = require('uuid')
 const fs = require('fs')
 const path = require('path')
 const http = require ('http')
 const server = http.createServer(app)
-const { Server } = require ('socket.io')
+const { Server } = require('socket.io')
 const io = new Server(server, {path: '/chat-server/', cors: {origin: '*'}})
 const port = 3000 | process.env.PORT
+const id = uuidv4()
 
-let messages = []
 
 io.on('connection', (socket) => {
-    io.socketsJoin('room1')
+    fs.writeFile(path.join(__dirname, 'chat_rooms', `${id}.txt`), '', (err) => {
+        if(err) throw err
+        console.log('wrote new file', id)
+    })
+
+    io.socketsJoin(id)
     console.log(io.engine.clientsCount)
     console.log('A user connected')
     
     socket.data.username = "allen"
     console.log(socket.rooms, socket.data)
     apiConnect(socket)
-    // fs.writeFile(path.join(__dirname + '/chats' + 'newchat.txt'), (err) => {
-    //     if(err) {
-    //         throw err
-    //     }
-    //     console.log("File written")
-    // })      
     
-    socket.on('chat message', (msg) => {
+    socket.on('chat message', async (msg) => {
         console.log('chat message', msg)
-        messages.push(msg)
-        let messageObj = {
-            messages: messages, 
-            id: socket.id
-        }
-        console.log(messages)
-        io.emit('chat message', messageObj);
+        fs.appendFileSync(path.join(__dirname, 'chat_rooms', `${id}.txt`), `${msg},`, (err) => {
+            if(err) throw err
+            console.log(`appended to file with id ${id}`)
+        })
+
+        fs.readFile(path.join(__dirname, 'chat_rooms', `${id}.txt`), 'utf8', (err, data) => {
+            if(err) {
+                throw err
+            }
+            chatEvent(data, id)
+        })
     });
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
 })
+
+let chatEvent = (data, id) => {
+    let splitData = data.split(',')
+    let messages = splitData.slice(0, splitData.length - 1)
+
+    let messageObj = {
+        messages: messages, 
+        id: id
+    }
+    io.emit('chat message', messageObj)
+}
 
 let apiConnect = (socket) => {
     let details = {}

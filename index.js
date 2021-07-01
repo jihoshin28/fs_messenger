@@ -5,62 +5,84 @@ const cors = require('cors')
 app.use(routes)
 app.use(cors())
 
-
-const {v4: uuidv4} = require('uuid')
 const fs = require('fs')
 const path = require('path')
 const http = require ('http')
 const server = http.createServer(app)
 const { Server } = require('socket.io')
-const io = new Server(server, {path: '/chat-server/', cors: {origin: '*'}})
+// const io2 = new Server(server, { cors: {origin: '*'}, path: '/user2/'})
+const io = new Server(server, { cors: {origin: '*'}})
 const port = 3000 | process.env.PORT
-const id = uuidv4()
 
 
 io.on('connection', (socket) => {
-    fs.writeFile(path.join(__dirname, 'chat_rooms', `${id}.txt`), '', (err) => {
-        if(err) throw err
-        console.log('wrote new file', id)
+    console.log(`Currently ${io.engine.clientsCount} users connected`)
+    console.log(socket.id, socket.handshake.query.username, 'namespace /')
+
+    apiConnect(socket)
+
+    //When user enters a room current Room must change
+    socket.on('enter room', (data) => {
+        console.log(data)
     })
 
-    io.socketsJoin(id)
-    console.log(io.engine.clientsCount)
-    console.log('A user connected')
-    
-    socket.data.username = "allen"
-    console.log(socket.rooms, socket.data)
-    apiConnect(socket)
-    
-    socket.on('chat message', async (msg) => {
-        console.log('chat message', msg)
-        fs.appendFileSync(path.join(__dirname, 'chat_rooms', `${id}.txt`), `${msg},`, (err) => {
-            if(err) throw err
-            console.log(`appended to file with id ${id}`)
-        })
 
-        fs.readFile(path.join(__dirname, 'chat_rooms', `${id}.txt`), 'utf8', (err, data) => {
-            if(err) {
-                throw err
-            }
-            chatEvent(data, id)
-        })
+    // When user joins room socket.rooms gets added to and current room changes
+    socket.on('join room', (data) => {
+        currentRoom = data
+        socket.join(data)
+        socket.to(data).emit('notification', 'I joined the room!')
+        console.log(`Joined room ${data}`, socket.rooms, currentRoom)
+    })
+
+    socket.on('leave room', (data) => {
+        currentRoom = undefined
+        socket.leave(data)
+        console.log(`Left room ${data}`, socket.rooms)
+    })
+
+    socket.on('rooms', (roomId) => {
+        let rooms = socket.rooms
+        const roomsObj = Array.from(rooms, v => v)
+        io.to(roomId).emit('rooms', {rooms: roomsObj, roomId})
+    })
+    //Need 
+    
+    socket.on('chat message', (message) => {
+        console.log('chat message', message, socket.rooms)
+        let messageObj = {
+            message: message.text, 
+            username: socket.handshake.query.username,
+            roomId: message.roomId
+        }
+
+        if(!!message.roomId){
+            io.to(message.roomId).emit('chat message', messageObj)
+        } else {
+            return
+        }
+        // fs.appendFileSync(path.join(__dirname, 'chat_rooms', `${id}.txt`), `${msg},`, (err) => {
+        //     if(err) throw err
+        //     console.log(`appended to file with id ${id}`)
+        // })
+
+        // fs.readFile(path.join(__dirname, 'chat_rooms', `${id}.txt`), 'utf8', (err, data) => {
+        //     if(err) {
+        //         throw err
+        //     }
+        //     chatEvent(data, id)
+        // })
     });
 
     socket.on('disconnect', () => {
-        console.log('user disconnected');
+        console.log('user disconnected', io.engine.clientsCount);
     });
-})
+}) 
 
-let chatEvent = (data, id) => {
-    let splitData = data.split(',')
-    let messages = splitData.slice(0, splitData.length - 1)
+// io2.of('/user2').on('connection', (socket) => {
+//     console.log(socket.id, io.engine.clientsCount, "2")
+// }) 
 
-    let messageObj = {
-        messages: messages, 
-        id: id
-    }
-    io.emit('chat message', messageObj)
-}
 
 let apiConnect = (socket) => {
     let details = {}

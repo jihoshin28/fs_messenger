@@ -4,9 +4,10 @@ const routes = require('./routes')
 const cors = require('cors')
 app.use(routes)
 app.use(cors())
-
 const fs = require('fs')
 const path = require('path')
+
+// Chat server requirements
 const http = require ('http')
 const server = http.createServer(app)
 const { Server } = require('socket.io')
@@ -14,20 +15,33 @@ const { Server } = require('socket.io')
 const io = new Server(server, { cors: {origin: '*'}})
 const port = 3000 | process.env.PORT
 
+//API calls
+
+
 
 io.on('connection', (socket) => {
     console.log(`Currently ${io.engine.clientsCount} users connected`)
     console.log(socket.id, socket.handshake.query.username, 'namespace /')
 
+    // Sending socket details on connection
     apiConnect(socket)
+    
+    // When user signs on, user joins all pending chats(db)
 
-    //When user enters a room current Room must change
-    socket.on('enter room', (data) => {
+
+    // Checking socket's current active rooms
+    checkRooms(socket)
+
+
+
+    //When user creates a room socket joins room, sends other user(s) ping, and user creates pending chat
+    socket.on('created room', (data) => {
+        // Single or group chat creation
         console.log(data)
     })
 
 
-    // When user joins room socket.rooms gets added to and current room changes
+    // When user enters a room socket joins room, 
     socket.on('join room', (data) => {
         currentRoom = data
         socket.join(data)
@@ -82,7 +96,13 @@ io.on('connection', (socket) => {
 // io2.of('/user2').on('connection', (socket) => {
 //     console.log(socket.id, io.engine.clientsCount, "2")
 // }) 
-
+let checkRooms = (socket) => {
+    socket.on('check rooms', (data) => {
+        let rooms = socket.rooms
+        const roomsObj = Array.from(rooms, v => v)
+        socket.emit('rooms', {rooms: roomsObj})
+    }) 
+}
 
 let apiConnect = (socket) => {
     let details = {}

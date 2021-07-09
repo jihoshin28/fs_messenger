@@ -8,7 +8,7 @@ const fs = require('fs')
 const path = require('path')
 
 // Chat server requirements
-const http = require ('http')
+const http = require('http')
 const server = http.createServer(app)
 const { Server } = require('socket.io')
 // const io2 = new Server(server, { cors: {origin: '*'}, path: '/user2/'})
@@ -18,19 +18,19 @@ const port = 3000 | process.env.PORT
 //API calls
 
 
-
 io.on('connection', (socket) => {
     console.log(`Currently ${io.engine.clientsCount} users connected`)
     console.log(socket.id, socket.handshake.query.username, 'namespace /')
 
+    // On connection...
     // Sending socket details on connection
     apiConnect(socket)
     
+    //When starting, user checks current rooms (need api call to check current rooms)
+    checkRooms(socket)
+    
     // When user signs on, user joins all pending chats(db)
 
-
-    // Checking socket's current active rooms
-    checkRooms(socket)
 
 
 
@@ -55,11 +55,10 @@ io.on('connection', (socket) => {
         console.log(`Left room ${data}`, socket.rooms)
     })
 
-    socket.on('rooms', (roomId) => {
-        let rooms = socket.rooms
-        const roomsObj = Array.from(rooms, v => v)
-        io.to(roomId).emit('rooms', {rooms: roomsObj, roomId})
+    socket.on('rooms', () => {
+        checkRooms(socket)
     })
+
     //Need 
     
     socket.on('chat message', (message) => {
@@ -97,11 +96,12 @@ io.on('connection', (socket) => {
 //     console.log(socket.id, io.engine.clientsCount, "2")
 // }) 
 let checkRooms = (socket) => {
-    socket.on('check rooms', (data) => {
-        let rooms = socket.rooms
-        const roomsObj = Array.from(rooms, v => v)
-        socket.emit('rooms', {rooms: roomsObj})
-    }) 
+    let rooms = socket.rooms
+    const roomsObj = Array.from(rooms, v => v)
+    roomsObj.shift()
+    console.log(roomsObj, 'roomsobj')
+    socket.emit('rooms', {rooms: roomsObj})
+
 }
 
 let apiConnect = (socket) => {

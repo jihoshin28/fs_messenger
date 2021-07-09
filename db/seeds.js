@@ -1,10 +1,10 @@
 const faker = require('faker')
 
-const chatModel = require('../models/chat')
-const messageModel = require('../models/message')
-const userModel = require('../models/user')
+const chatModel = require('../api/models/chat')
+const messageModel = require('../api/models/message')
+const userModel = require('../api/models/user')
 
-const db = require('../index')
+const db = require('./index')
 
 console.log(userModel, db)
 let seedUsers = () => {

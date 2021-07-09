@@ -1,7 +1,5 @@
+const express = require('express')
 const chatModel = require('./db/models/chat')
+const db = require('../db/index')
 
-var onechat = chatModel.find((data) => {
-    console.log(data)
-})
-
-onechat()
+const router = express.Router()

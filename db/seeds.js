@@ -1,13 +1,13 @@
 const faker = require('faker')
 
-const chatModel = require('../api/models/chat')
-const messageModel = require('../api/models/message')
-const userModel = require('../api/models/user')
+const Chat = require('../api/models/chat')
+const Message = require('../api/models/message')
+const User = require('../api/models/user')
 
-const db = require('./index')
+const connectDB = require('./index')
 
-console.log(userModel, db)
 let seedUsers = () => {
+    
     for(let i = 0; i < 20; i++){
         // let userSeed = {
         //     username: faker.name.findName,
@@ -15,11 +15,11 @@ let seedUsers = () => {
         //     last_name: faker.name.lastName,
         //     email: faker.internet.email
         // }
-        let userSeed = new userModel({
-            username: faker.name.findName,
-            first_name: faker.name.firstName,
-            last_name: faker.name.lastName,
-            email: faker.internet.email
+        let userSeed = new User({
+            username: faker.name.findName(),
+            first_name: faker.name.firstName(),
+            last_name: faker.name.lastName(),
+            email: faker.internet.email()
         })
         userSeed.save((err) => {
             if(err){
@@ -29,6 +29,7 @@ let seedUsers = () => {
     }
 }
 
+seedUsers()
 let seedChats = () => {
     // let typeChoices = ['Group', 'Solo']
     // let chatInstance = new ChatModel({

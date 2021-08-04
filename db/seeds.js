@@ -9,18 +9,21 @@ const connectDB = require('./index')
 let seedUsers = () => {
     
     for(let i = 0; i < 20; i++){
+        
         // let userSeed = {
         //     username: faker.name.findName,
         //     first_name: faker.name.firstName,
         //     last_name: faker.name.lastName,
         //     email: faker.internet.email
         // }
+
         let userSeed = new User({
             username: faker.name.findName(),
             first_name: faker.name.firstName(),
             last_name: faker.name.lastName(),
             email: faker.internet.email()
         })
+
         userSeed.save((err) => {
             if(err){
                 throw err

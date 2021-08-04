@@ -2,12 +2,20 @@ const express = require('express')
 const app = express()
 const routes = require('./routes')
 const cors = require('cors')
-app.use(routes)
+
 app.use(cors())
+app.use(routes)
 const fs = require('fs')
 const path = require('path')
 
-// Chat server requirements
+// DB imports
+
+const connect = require('./db/index')
+// const User = require('./api/models/user')
+const Message = require('./api/models/message')
+// const Chat = require('./api/models/chat')
+
+// Chat server imports
 const http = require('http')
 const server = http.createServer(app)
 const { Server } = require('socket.io')
@@ -71,6 +79,18 @@ io.on('connection', (socket) => {
 
         if(!!message.roomId){
             io.to(message.roomId).emit('chat message', messageObj)
+            let newMessage = new Message({
+                text: message.text,
+                read: false,
+                user_id: '1',
+                chat_id: message.room_id
+            })
+    
+            newMessage.save((err) => {
+                if(err){
+                    throw err
+                }
+            })  
         } else {
             return
         }

@@ -11,11 +11,16 @@ router.get('/', (req, res) => {
 
 //users routes
 
-router.get('/users', chatController.getUser)
+router.get('/users', userController.getUsers)
+router.get('/users/:id', userController.getUser)
+router.post('/users', userController.createUser)
+router.patch('users', userController.updateUser)
+router.delete('users', userController.deleteUser)
 
 //chat routes
 
-
+router.get('/chats', chatController.getAllUserChats)
+router.post('/posts')
 
 // messages routes
 

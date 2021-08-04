@@ -1,10 +1,27 @@
 const User = require('../api/models/user')
+const Message = require('../api/models/message')
 
 const connectDB = require('./index')
 
-let testDb = () => {
-    User.find({}).then(chat => {
-        console.log(chat)
-    })    
+let userDb = () => {
+
+    let users = User.find({}, function (err, users){
+        if(err) return err
+        return users
+    })
+    return users
+  
 }
-testDb()
+
+let messageDb = () => {
+    Message.find({}, function(err, messages){
+        if(err) return err
+        console.log(messages)
+    })
+}
+
+
+let users = userDb()
+console.log(userDb())
+
+// messageDb()

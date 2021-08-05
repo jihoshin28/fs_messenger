@@ -40,6 +40,18 @@ io.on('connection', (socket) => {
     // When user signs on, user joins all pending chats(db)
 
 
+    // When socket connects socket joins all rooms from chat rooms array received from api
+    socket.on('join rooms', (data) => {
+        let rooms = data.chatIds
+        let user_id = data.user_id
+        console.log(rooms)
+        rooms.forEach((chat_id) => {
+            socket.join(chat_id)
+        })
+        socket.handshake.query.user_id = user_id
+        socket.to(data).emit('notification', 'I joined the room!')
+        console.log(`Joined room ${data.chatIds}`, socket.rooms, user_id)
+    })
 
 
     //When user creates a room socket joins room, sends other user(s) ping, and user creates pending chat
@@ -49,13 +61,6 @@ io.on('connection', (socket) => {
     })
 
 
-    // When user enters a room socket joins room, 
-    socket.on('join room', (data) => {
-        currentRoom = data
-        socket.join(data)
-        socket.to(data).emit('notification', 'I joined the room!')
-        console.log(`Joined room ${data}`, socket.rooms, currentRoom)
-    })
 
     socket.on('leave room', (data) => {
         currentRoom = undefined
@@ -73,7 +78,7 @@ io.on('connection', (socket) => {
         console.log('chat message', message, socket.rooms)
         let messageObj = {
             message: message.text, 
-            username: socket.handshake.query.username,
+            username: socket.handshake.query.user_id,
             roomId: message.roomId
         }
 
@@ -82,10 +87,10 @@ io.on('connection', (socket) => {
             let newMessage = new Message({
                 text: message.text,
                 read: false,
-                user_id: '1',
+                user_id: socket.handshake.query.user_id,
                 chat_id: message.room_id
             })
-    
+            console.log(newMessage)
             newMessage.save((err) => {
                 if(err){
                     throw err

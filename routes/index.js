@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
 //users routes
 
 router.get('/users', userController.getUsers)
-router.get('/users/:id', userController.getUser)
+router.get('/users/:email', userController.getUser)
 router.post('/users', userController.createUser)
 router.patch('users', userController.updateUser)
 router.delete('users', userController.deleteUser)

@@ -6,7 +6,6 @@ const getUsers = async(req, res) => {
     try {
         res.statusCode = 200
         res.setHeader("Content-Type", "application/json")
-        res.setHeader('Access-Control-Allow-Origin', '*')
         User.find({}).then(users => {
             res.json(users)
         })
@@ -18,7 +17,9 @@ const getUsers = async(req, res) => {
 const getUser= async(req, res) => {
     console.log(req.params.id, 'id')
     try {
-        const user = await User.find({'_id': req.params.id}, function(err, user){
+        res.statusCode = 200
+        res.setHeader("Content-Type", "application/json")
+        User.find({'email': req.params.email}, function(err, user){
             if(err) {
                 return err
             }

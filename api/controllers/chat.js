@@ -1,9 +1,11 @@
 const Chat = require('../models/chat')
+const User = require('../models/user')
 
 const getAllUserChats = async(req, res) => {
     try{
         res.header('Content-Type', 'application/json')
-        let chats = await Chat.find({user_id: req.user_id})
+        let user = await User.find({_id: req.params.id})
+        let chats = user.chats
         res.json({chats}).status(200)
     } catch(error){
         res.send(error.message).status(500)

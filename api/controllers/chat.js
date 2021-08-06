@@ -28,13 +28,12 @@ const createNewChat = (req, res) => {
 
 const addUserToChat = async(req, res) => {
     try{
-        res.header('Content-Type', 'application/json')
         const chat = Chat.find({_id: req.params.id})
         chat.users = [...chat.users, req.body.user_id]
         chat.save((err) => {
             if(err) throw err
         }) 
-        res.json({chat}).status(200)
+        res.send(`Added user with user id ${req.body.user_id} to chat`).status(200)
     } catch(error){
         res.send(error.message).status(500)
     }
@@ -42,20 +41,24 @@ const addUserToChat = async(req, res) => {
 
 const removeUserFromChat = async(req, res) => {
     try{
-        res.header('Content-Type', 'application/json')
         const chat = Chat.find({_id: req.params.id})
         chat.users = chat.users.filter((user_id) => user_id !== req.body.user_id)
         chat.save((err) => {
             if(err) throw err
         }) 
-        res.json({chat}).status(200)
+        res.send(`Removed user with user id ${req.body.user_id} from chat.`).status(200)
     } catch(error){
         res.send(error.message).status(500)
     }
 }
 
-const deleteChat = () => {
-
+const deleteChat = async(req, res) => {
+    try{
+        Chat.delete({_id: req.params.id})
+        res.send(`Deleted chat with id ${req.params.id}`).status(200)
+    } catch(error){
+        res.send(error.message).status(500)
+    }
 }
 
 module.exports = {

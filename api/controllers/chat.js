@@ -11,8 +11,20 @@ const getAllUserChats = async(req, res) => {
     }
 }
 
-const createNewChat = () => {
-
+const createNewChat = (req, res) => {
+    try{
+        res.header('Content-Type', 'application/json')
+        const newChat = new Chat({
+            users: [req.body.user_ids],
+            messages: []
+        })
+        newChat.save((err) => {
+            if(err) throw err
+        }) 
+        res.json({newChat}).status(200)
+    } catch(error){
+        res.send(error.message).status(500)
+    }
 }
 
 const deleteChat = () => {
@@ -20,6 +32,8 @@ const deleteChat = () => {
 }
 
 module.exports = {
-    getAllUserChats
+    getAllUserChats,
+    createNewChat,
+    deleteChat
 }
 

@@ -15,7 +15,8 @@ const userSchema = new Schema({
         email: {
             type: String
         },
-        // friends: [Schema.Types.ObjectId]
+        chats: [{type: Schema.Types.ObjectId, ref: 'Chat'}],
+        friends: [{type: Schema.Types.ObjectId, ref: 'User'}]
     },
     {timestamps: true}
 );

@@ -19,7 +19,7 @@ router.delete('users', userController.deleteUser)
 
 //chat routes
 
-router.get('/chats', chatController.getAllUserChats)
+router.get('/chats/:user_id', chatController.getAllUserChats)
 router.post('/posts')
 
 // messages routes

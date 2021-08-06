@@ -7,8 +7,8 @@ const chatSchema = new Schema({
     //     enum: ['Group', 'Private']
     //     // other options: min, max, required, enum(array, what values allowed)
     // },
-        users: [Schema.Types.ObjectId],
-        messages: [Schema.Types.ObjectId],
+        users: [{type: Schema.Types.ObjectId, ref: 'User'}],
+        messages: [{type: Schema.Types.ObjectId, ref: 'Message'}],
     // timestamps: true
     },
     {timestamps: true}

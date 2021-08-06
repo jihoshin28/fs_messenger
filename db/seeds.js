@@ -8,15 +8,8 @@ const connectDB = require('./index')
 
 let seedUsers = () => {
     
-    for(let i = 0; i < 20; i++){
+    for(let i = 0; i < 3; i++){
         
-        // let userSeed = {
-        //     username: faker.name.findName,
-        //     first_name: faker.name.firstName,
-        //     last_name: faker.name.lastName,
-        //     email: faker.internet.email
-        // }
-
         let userSeed = new User({
             username: faker.name.findName(),
             first_name: faker.name.firstName(),
@@ -32,12 +25,16 @@ let seedUsers = () => {
     }
 }
 
-seedUsers()
-let seedChats = () => {
-    // let typeChoices = ['Group', 'Solo']
-    // let chatInstance = new ChatModel({
-        
-    // })
+let seedChats = async() => {
+    for(let i = 0; i < 5; i++){
+        let chatSeed = new Chat({
+            
+        })
+        chatSeed.save((err) => {
+            if(err) throw(err);
+            
+        })
+    }
 }
 
 let seedMessages = () => {
@@ -46,6 +43,8 @@ let seedMessages = () => {
     }
 }
 
+seedUsers()
+seedChats()
 
 
 // seedChats()

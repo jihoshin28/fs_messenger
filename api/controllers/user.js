@@ -4,13 +4,12 @@ const connect = require('../../db')
 const getUsers = async(req, res) => {
     console.log(req, res)
     try {
-        res.statusCode = 200
         res.setHeader("Content-Type", "application/json")
         User.find({}).then(users => {
-            res.json(users)
+            res.json(users).status(200)
         })
     } catch(error){
-        return res.status(500).send(error.message)
+        return res.send(error.message).status(500)
     }
 }
 
@@ -26,7 +25,7 @@ const getUser= async(req, res) => {
             return res.json({user}).status(200)
         })
     } catch(error){
-        return res.status(500).send(error.message)
+        return res.send(error.message).status(500)
     }
 }
 

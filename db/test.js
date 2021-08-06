@@ -1,16 +1,14 @@
 const User = require('../api/models/user')
 const Message = require('../api/models/message')
+const Chat = require('../api/models/chat')
 
 const connectDB = require('./index')
 
 let userDb = () => {
-
-    let users = User.find({}, function (err, users){
+    User.find({}, function (err, users){
         if(err) return err
-        return users
+        console.log(users)
     })
-    return users
-  
 }
 
 let messageDb = () => {
@@ -20,8 +18,23 @@ let messageDb = () => {
     })
 }
 
+let chatDb = () => {
+    Chat.find({}, function(err, chats){
+        if(err) return err
+        console.log(chats)
+    })
+}
+
+let populateUser = async() => {
+    const userSeed = await User.findOne({})
+    // console.log(userSeed, "USER SEED")
+    User.findOne({}).populate('friends').exec((err, user) => {
+        if(err) throw err
+        console.log(user)
+    })
+}
 
 messageDb()
-console.log(userDb())
-
-// messageDb()
+userDb()
+chatDb()
+// populateUser()

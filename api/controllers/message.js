@@ -1,7 +1,7 @@
 const Message = require('../models/message')
 const Chat = require('../models/chat')
 
-const getChatMessagesForChat = async(req, res) => {
+const getChatMessages = async(req, res) => {
     await Chat.find({_id: req.params.chat_id}, (err, chat) => {
         if(err) {
             res.send(err).status(500)

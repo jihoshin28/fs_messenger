@@ -29,6 +29,19 @@ const getUser= async(req, res) => {
     }
 }
 
+const addFriend = async(req, res) => {
+    await User.find({'_id': req.params.id}, function(err, user){
+        if(err){
+            return err
+        }
+        let newFriends = [...user.friends, req.body.friend]
+        user.friends = newFriends
+        user.save((err) => {
+            if(err) throw err
+        })
+    })
+}
+
 const createUser = () => {
 
 }

@@ -1,15 +1,13 @@
 const Chat = require('../models/chat')
 const User = require('../models/user')
 
-const getAllUserChats = async(req, res) => {
-    try{
-        res.header('Content-Type', 'application/json')
-        let user = await User.find({_id: req.params.id})
-        let chats = user.chats
-        res.json({chats}).status(200)
-    } catch(error){
-        res.send(error.message).status(500)
-    }
+const getChat = async(req, res) => {
+    const chat = await Chat.find({_id: req.params }).populate('messages').exec((err, chat) => {
+        if(err){
+            res.send(err).status(500)
+        }
+        res.json({chat}).status(200)
+    })
 }
 
 const createNewChat = (req, res) => {
@@ -64,7 +62,7 @@ const deleteChat = async(req, res) => {
 }
 
 module.exports = {
-    getAllUserChats,
+    getChat,
     createNewChat,
     addUserToChat,
     removeUserFromChat,

@@ -1,19 +1,6 @@
 const Message = require('../models/message')
 const Chat = require('../models/chat')
 
-const getChatMessages = async(req, res) => {
-    await Chat.find({_id: req.params.chat_id}, (err, chat) => {
-        if(err) {
-            res.send(err).status(500)
-        }
-        const messageData = {
-            chat_id: chat._id,
-            chat_messages: chat.messages
-        }
-        res.json(messageData).status(200)
-    })
-}
-
 const updateChatMessage = async(req, res) => {
     await Chat.updateOne({'_id': req.params.id}, req.body.newMesage,  (err) => {
         if(err) {
@@ -34,7 +21,6 @@ const deleteChatMessage = async(req, res) => {
 }
 
 module.exports = {
-    getChatMessages,
     updateChatMessage,
     deleteChatMessage
 }

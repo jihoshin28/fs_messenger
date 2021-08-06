@@ -42,8 +42,14 @@ const addFriend = async(req, res) => {
     })
 }
 
-const createUser = () => {
-
+const createUser = (req, res) => {
+    let userSeed = new User(req.body.newUser)
+    userSeed.save((err) => {
+        if(err){
+            res.send(err.message).status(500)
+        }
+    })
+    res.send(`User ${userSeed._id} created`)
 }
 
 const updateUser = () => {
@@ -58,6 +64,7 @@ const deleteUser = () => {
 module.exports = {
     getUser,
     getUsers,
+    addFriend,
     createUser,
     updateUser,
     deleteUser

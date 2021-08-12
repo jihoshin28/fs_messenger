@@ -2,7 +2,7 @@ const Chat = require('../models/chat')
 const User = require('../models/user')
 
 const getChat = async(req, res) => {
-    const chat = await Chat.find({_id: req.params }).populate('messages').exec((err, chat) => {
+    const chat = await Chat.find({_id: req.params.id }).populate('messages').exec((err, chat) => {
         if(err){
             res.send(err).status(500)
         }

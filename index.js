@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
 
     // When socket connects socket joins all rooms from chat rooms array received from api
     socket.on('join rooms', (data) => {
-        let rooms = data.chatIds
+        let rooms = data.chat_ids
         let user_id = data.user_id
         console.log(rooms)
         rooms.forEach((chat_id) => {

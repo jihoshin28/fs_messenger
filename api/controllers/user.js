@@ -52,12 +52,13 @@ const createUser = (req, res) => {
     res.send(`User ${userSeed._id} created`)
 }
 
-const updateUser = () => {
+const updateUser = async(req, res) => { 
+    // used for adding friends or updating any info for user
 
 }
 
 const deleteUser = () => {
-
+    
 }
 
 

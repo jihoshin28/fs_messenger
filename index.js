@@ -3,6 +3,8 @@ const app = express()
 const routes = require('./routes')
 const cors = require('cors')
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cors())
 app.use(routes)
 const fs = require('fs')
@@ -44,7 +46,6 @@ io.on('connection', (socket) => {
     socket.on('join rooms', (data) => {
         let rooms = data.chat_ids
         let user_id = data.user_id
-        console.log(rooms)
         rooms.forEach((chat_id) => {
             socket.join(chat_id)
         })

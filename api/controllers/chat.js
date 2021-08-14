@@ -11,7 +11,7 @@ const getChats = async(req, res) => {
 }
 
 const getChat = async(req, res) => {
-    const chat = await Chat.find({_id: req.params.id }).populate('messages').exec((err, chat) => {
+    const chat = await Chat.find({_id: req.params.id }).populate('messages').populate('users').exec((err, chat) => {
         if(err){
             res.send(err).status(500)
         }
@@ -19,17 +19,28 @@ const getChat = async(req, res) => {
     })
 }
 
-const createChat = (req, res) => {
-    console.log(req.body.user_ids)
+const createChat = async(req, res) => {
     try{
+        let user_ids = req.body.user_ids
         res.header('Content-Type', 'application/json')
         const newChat = new Chat({
-            users: req.body.user_ids,
+            users: user_ids,
             messages: []
         })
         newChat.save((err) => {
             if(err) throw err
         }) 
+
+        for(let i = 0; i < user_ids.length; i++) {
+            User.findById(user_ids[i], function (err, user) {
+                if (err) throw err
+                user.chats = [...user.chats, newChat]
+                user.save((err) => {
+                    if(err) throw err
+                })
+            });
+        }
+        
         res.json({newChat}).status(200)
     } catch(error){
         res.send(error.message).status(500)

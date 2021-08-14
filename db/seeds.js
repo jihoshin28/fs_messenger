@@ -8,7 +8,7 @@ const connectDB = require('./index')
 
 let seedUsers = () => {
     
-    for(let i = 0; i < 3; i++){
+    for(let i = 0; i < 20; i++){
         
         let userSeed = new User({
             username: faker.name.findName(),
@@ -28,7 +28,7 @@ let seedUsers = () => {
 let seedChats = async() => {
     for(let i = 0; i < 5; i++){
         let chatSeed = new Chat({
-            
+        
         })
         chatSeed.save((err) => {
             if(err) throw(err);

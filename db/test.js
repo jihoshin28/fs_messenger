@@ -26,7 +26,7 @@ let chatDb = () => {
 }
 
 let populateUser = async() => {
-    const userSeed = await User.findOne({})
+    // const userSeed = await User.findOne({})
     // console.log(userSeed, "USER SEED")
     User.findOne({}).populate('friends').exec((err, user) => {
         if(err) throw err
@@ -34,7 +34,17 @@ let populateUser = async() => {
     })
 }
 
-messageDb()
-userDb()
-chatDb()
-// populateUser()
+let populateChat = async() => {
+    let chat = Chat.find({})
+    console.log(chat)
+    // Chat.find({}).populate('users').exec((err, chat) => {
+    //     if(err) throw err
+    //     console.log(chat[0].users)
+    // })
+}
+
+// messageDb()
+// userDb()
+// chatDb()
+// populateChat()
+populateChat()

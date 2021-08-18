@@ -2,7 +2,7 @@ const User = require('../models/user')
 const connect = require('../../db')
 
 const getUsers = async(req, res) => {
-    console.log(req, res)
+
     try {
         res.setHeader("Content-Type", "application/json")
         User.find({}).then(users => {

@@ -15,7 +15,7 @@ const path = require('path')
 const connect = require('./db/index')
 // const User = require('./api/models/user')
 const Message = require('./api/models/message')
-// const Chat = require('./api/models/chat')
+const Chat = require('./api/models/chat')
 
 // Chat server imports
 const http = require('http')
@@ -43,7 +43,8 @@ io.on('connection', (socket) => {
 
 
     // When socket connects socket joins all rooms from chat rooms array received from api
-    socket.on('join rooms', (data) => {
+    socket.on('on login', (data) => {
+        console.log(data)
         let rooms = data.chat_ids
         let user_id = data.user_id
         rooms.forEach((chat_id) => {
@@ -61,8 +62,6 @@ io.on('connection', (socket) => {
         console.log(data)
     })
 
-
-
     socket.on('leave room', (data) => {
         currentRoom = undefined
         socket.leave(data)
@@ -75,8 +74,8 @@ io.on('connection', (socket) => {
 
     //Need 
     
-    socket.on('chat message', (message) => {
-        console.log('chat message', message, socket.rooms)
+    socket.on('chat message', async (message) => {
+        console.log('chat message', message)
         let messageObj = {
             message: message.text, 
             username: socket.handshake.query.user_id,
@@ -84,19 +83,29 @@ io.on('connection', (socket) => {
         }
 
         if(!!message.roomId){
+            console.log('room id exists ')
             io.to(message.roomId).emit('chat message', messageObj)
             let newMessage = new Message({
                 text: message.text,
                 read: false,
                 user_id: socket.handshake.query.user_id,
-                chat_id: message.room_id
+                chat_id: message.roomId
             })
-            console.log(newMessage)
+            
+            let chat = await Chat.find({_id: message.roomId})
+            let currentChat = chat[0]
+            currentChat.messages.push(newMessage)
             newMessage.save((err) => {
                 if(err){
                     throw err
                 }
             })  
+            currentChat.save((err) => {
+                if(err){
+                    throw err
+                }
+            })
+            
         } else {
             return
         }

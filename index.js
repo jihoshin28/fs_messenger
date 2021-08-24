@@ -30,8 +30,6 @@ const port = 3000 | process.env.PORT
 
 io.on('connection', (socket) => {
     console.log(`Currently ${io.engine.clientsCount} users connected`)
-    console.log(socket.id, socket.handshake.query.username, 'namespace /')
-
     // On connection...
     // Sending socket details on connection
     apiConnect(socket)
@@ -65,6 +63,7 @@ io.on('connection', (socket) => {
     socket.on('leave room', (data) => {
         currentRoom = undefined
         socket.leave(data)
+        // need data bsae call here to remove user from chat data
         console.log(`Left room ${data}`, socket.rooms)
     })
 
@@ -75,23 +74,21 @@ io.on('connection', (socket) => {
     //Need 
     
     socket.on('chat message', async (message) => {
-        console.log('chat message', message)
-        let messageObj = {
-            message: message.text, 
-            username: socket.handshake.query.user_id,
-            roomId: message.roomId
-        }
-
+        
+        // check to make sure roomId exists
         if(!!message.roomId){
-            console.log('room id exists ')
-            io.to(message.roomId).emit('chat message', messageObj)
+            console.log('room id exists')
+            // create the new mesage in DB
             let newMessage = new Message({
                 text: message.text,
                 read: false,
+                username: message.username, 
+                day: message.day,
+                time: message.time,
                 user_id: socket.handshake.query.user_id,
                 chat_id: message.roomId
             })
-            
+
             let chat = await Chat.find({_id: message.roomId})
             let currentChat = chat[0]
             currentChat.messages.push(newMessage)
@@ -105,7 +102,18 @@ io.on('connection', (socket) => {
                     throw err
                 }
             })
-            
+            // emit a socket event
+
+            let messageObj = {
+                text: message.text, 
+                username: message.username,
+                roomId: message.roomId, 
+                day: message.day,
+                time: message.time,
+                user_id: message.user_id
+            }
+            console.log(messageObj, newMessage.createdAt)
+            io.to(message.roomId).emit('chat message', messageObj)
         } else {
             return
         }

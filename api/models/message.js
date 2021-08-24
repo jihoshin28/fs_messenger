@@ -9,6 +9,9 @@ const messageSchema = new Schema({
         read: {
             type: Boolean
         },
+        username: {type: String},
+        day: [Number],
+        time: [Number],
         user_id: {
             type: Schema.Types.ObjectId,
             ref: 'User'

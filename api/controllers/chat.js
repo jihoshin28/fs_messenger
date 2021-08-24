@@ -2,7 +2,7 @@ const Chat = require('../models/chat')
 const User = require('../models/user')
 
 const getChats = async(req, res) => {
-    const chats = await Chat.find({}, (err, users) => {
+    await Chat.find({}, (err, chats) => {
         if(err) {
             res.send(err).status(500)
         }
@@ -11,7 +11,7 @@ const getChats = async(req, res) => {
 }
 
 const getChat = async(req, res) => {
-    const chat = await Chat.find({_id: req.params.id }).populate('messages').populate('users').exec((err, chat) => {
+    await Chat.find({_id: req.params.id }).populate('messages').populate('users').exec((err, chat) => {
         if(err){
             res.send(err).status(500)
         }

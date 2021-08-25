@@ -14,6 +14,7 @@ let seedUsers = () => {
             username: faker.name.findName(),
             first_name: faker.name.firstName(),
             last_name: faker.name.lastName(),
+            password: faker.random.word(),
             email: faker.internet.email()
         })
 

@@ -15,6 +15,9 @@ const userSchema = new Schema({
         email: {
             type: String
         },
+        password:{
+            type: String
+        },
         chats: [{type: Schema.Types.ObjectId, ref: 'Chat'}],
         friends: [{type: Schema.Types.ObjectId, ref: 'User'}]
     },

@@ -4,10 +4,14 @@ const router = express.Router()
 const chatController = require('../api/controllers/chat')
 const messageController = require('../api/controllers/message')
 const userController = require('../api/controllers/user')
+const authController = require('../api/controllers/auth')
 
 router.get('/', (req, res) => {
     res.send({ response: "Main chat page"}).status(200)
 })
+
+//auth routes
+router.post('/login', authController.login)
 
 //users routes
 

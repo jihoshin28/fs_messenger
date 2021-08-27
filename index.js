@@ -12,7 +12,7 @@ const path = require('path')
 
 // DB imports
 
-const connect = require('./db/index')
+
 // const User = require('./api/models/user')
 const Message = require('./api/models/message')
 const Chat = require('./api/models/chat')

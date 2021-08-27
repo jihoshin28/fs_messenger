@@ -1,5 +1,8 @@
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 const login = async(req, res) => {
 
@@ -12,12 +15,12 @@ const login = async(req, res) => {
         }
         console.log(user)
         console.log(req.body.password, user[0].password)
+        console.log(process.env.SECRET)
         if(req.body.password === user[0].password){
-            const token = '12345'
-            // const token = jwt.sign({
-            //     username: req.body.username
-            // },
-            // process.env.SECRET)
+            const token = jwt.sign({
+                username: req.body.username
+            },
+            process.env.SECRET)
             console.log(token, 'token')
             return res.json({
                 success: true, 

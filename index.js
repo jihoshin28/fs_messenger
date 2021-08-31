@@ -7,11 +7,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors())
 app.use(routes)
-const fs = require('fs')
-const path = require('path')
+
+// const fs = require('fs')
+// const path = require('path')
 
 // DB imports
-
 
 // const User = require('./api/models/user')
 const Message = require('./api/models/message')
@@ -21,7 +21,6 @@ const Chat = require('./api/models/chat')
 const http = require('http')
 const server = http.createServer(app)
 const { Server } = require('socket.io')
-// const io2 = new Server(server, { cors: {origin: '*'}, path: '/user2/'})
 const io = new Server(server, { cors: {origin: '*'}})
 const port = 3000 | process.env.PORT
 
@@ -85,7 +84,7 @@ io.on('connection', (socket) => {
                 username: message.username, 
                 day: message.day,
                 time: message.time,
-                user_id: socket.handshake.query.user_id,
+                user_id: message.user_id,
                 chat_id: message.roomId
             })
 
@@ -112,7 +111,7 @@ io.on('connection', (socket) => {
                 time: message.time,
                 user_id: message.user_id
             }
-            console.log(messageObj, newMessage.createdAt)
+            console.log(messageObj)
             io.to(message.roomId).emit('chat message', messageObj)
         } else {
             return

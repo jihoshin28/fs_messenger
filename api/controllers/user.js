@@ -43,13 +43,13 @@ const addFriend = async(req, res) => {
 }
 
 const createUser = (req, res) => {
-    let userSeed = new User(req.body.newUser)
+    let userSeed = new User(req.body.userInfo)
     userSeed.save((err) => {
         if(err){
             res.send(err.message).status(500)
         }
     })
-    res.send(`User ${userSeed._id} created`)
+    res.send(userSeed).status(200)
 }
 
 const updateUser = async(req, res) => { 

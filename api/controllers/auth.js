@@ -16,7 +16,6 @@ const login = async(req, res) => {
         } else {
             
             if(user.length < 1) {
-                console.log('error')
                 return res.json({
                     success: false,
                     message: "No user matches this email"

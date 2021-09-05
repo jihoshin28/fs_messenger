@@ -41,12 +41,14 @@ io.on('connection', (socket) => {
 
     // When socket connects socket joins all rooms from chat rooms array received from api
     socket.on('on login', (data) => {
-        console.log(data)
+        console.log(data, 'logged in')
         let rooms = data.chat_ids
         let user_id = data.user_id
-        rooms.forEach((chat_id) => {
-            socket.join(chat_id)
-        })
+        if(!!rooms){
+            rooms.forEach((chat_id) => {
+                socket.join(chat_id)
+            })
+        }
         socket.handshake.query.user_id = user_id
         socket.to(data).emit('notification', 'I joined the room!')
         console.log(`Joined room ${data.chatIds}`, socket.rooms, user_id)
@@ -56,7 +58,13 @@ io.on('connection', (socket) => {
     //When user creates a room socket joins room, sends other user(s) ping, and user creates pending chat
     socket.on('created room', (data) => {
         // Single or group chat creation
-        console.log(data)
+        let users = data.newChat.users
+        for(let i = 0; i < data.newChat.users.length; i++){
+            if(users[i] === socket.handshake.query.user_id){
+                console.log(users[i], socket.handshake.query.user_id)
+                socket.join(data.newChat._id)
+            }
+        }
     })
 
     socket.on('leave room', (data) => {
@@ -91,28 +99,21 @@ io.on('connection', (socket) => {
             let chat = await Chat.find({_id: message.roomId})
             let currentChat = chat[0]
             currentChat.messages.push(newMessage)
-            newMessage.save((err) => {
-                if(err){
-                    throw err
-                }
-            })  
             currentChat.save((err) => {
                 if(err){
                     throw err
                 }
             })
+            newMessage.save((err, message) => {
+                if(err){
+                    throw err
+                }
+                console.log('message emitted to', message.chat_id, message)
+                io.to(message.chat_id.toString()).emit('chat message', message)
+            })  
             // emit a socket event
 
-            let messageObj = {
-                text: message.text, 
-                username: message.username,
-                roomId: message.roomId, 
-                day: message.day,
-                time: message.time,
-                user_id: message.user_id
-            }
-            console.log(messageObj)
-            io.to(message.roomId).emit('chat message', messageObj)
+
         } else {
             return
         }

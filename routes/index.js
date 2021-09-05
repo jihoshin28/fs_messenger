@@ -18,6 +18,7 @@ router.post('/login', authController.login)
 router.get('/users', userController.getUsers)
 router.get('/users/:email', userController.getUser)
 router.post('/users', userController.createUser)
+router.patch('/users/leave/:id', userController.leaveRoom)
 router.patch('users', userController.updateUser)
 router.delete('users', userController.deleteUser)
 

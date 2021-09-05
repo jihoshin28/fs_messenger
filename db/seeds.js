@@ -8,7 +8,7 @@ const connectDB = require('./index')
 
 let seedUsers = () => {
     
-    for(let i = 0; i < 20; i++){
+    for(let i = 0; i < 100; i++){
         
         let userSeed = new User({
             username: faker.name.findName(),
